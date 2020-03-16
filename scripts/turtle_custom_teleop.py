@@ -69,7 +69,7 @@ def turtle_custom_teleop()
 			print("^C") # illusion 100
 			break
 
-# 
+# start point
 if __name__=='__main__':
 	try:
 		settings = termios.tcgetattr(sys.stdin)
