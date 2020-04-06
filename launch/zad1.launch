@@ -1,8 +1,0 @@
-<launch>
-
-	<group ns="turtlesim">
-		<node pkg="turtlesim" name="sim" type="turtlesim_node"/>
-		<node pkg="anro-banasik_szerszen" name="teleop" type="turtle_custom_teleop.py"/>
-	</group>
-
-</launch>
