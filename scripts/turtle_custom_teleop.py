@@ -16,7 +16,7 @@ def getKey():
 	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
 	return key
 
-def turtle_custom_teleop()
+def turtle_custom_teleop():
 	# create default settings parameters
 	rospy.set_param("keybinds/forward", 'w')
 	rospy.set_param("keybinds/backward", 's')
