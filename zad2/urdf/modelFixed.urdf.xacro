@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<robot name="model" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:property name="baseRadius" value="0.5" />
+  <xacro:property name="baseLength" value="0.6" />
+  <xacro:property name="LinkRadius" value="0.2" />
+  <xacro:property name="ToolRadius" value="0.1" />
+  <xacro:property name="toolLength" value="1" />
+
+  <xacro:property name="yaml_file" value="$(find zad2)/param.yaml" />
+  <xacro:property name="param" value="${load_yaml(yaml_file)}"/>
+
+  <xacro:property name="roll1" value="${param['roll1']}" />
+  <xacro:property name="roll2" value="${param['roll2']}" />
+  <xacro:property name="roll3" value="${param['roll3']}" />
+  <xacro:property name="pitch1" value="${param['pitch1']}" />
+  <xacro:property name="pitch2" value="${param['pitch2']}" />
+  <xacro:property name="pitch3" value="${param['pitch3']}" />
+  <xacro:property name="yaw1" value="${param['yaw1']}" />
+  <xacro:property name="yaw2" value="${param['yaw2']}" />
+  <xacro:property name="yaw3" value="${param['yaw3']}" />
+  <xacro:property name="x1" value="${param['x1']}" />
+  <xacro:property name="x2" value="${param['x2']}" />
+  <xacro:property name="x3" value="${param['x3']}" />
+  <xacro:property name="y1" value="${param['y1']}" />
+  <xacro:property name="y2" value="${param['y2']}" />
+  <xacro:property name="y3" value="${param['y3']}" />
+  <xacro:property name="z1" value="${param['z1']}" />
+  <xacro:property name="z2" value="${param['z2']}" />
+  <xacro:property name="z3" value="${param['z3']}" />
+
+  <material name="blue">
+    <color rgba="0 0 1 1"/>
+  </material>
+
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder radius="${baseRadius}" length="${baseLength}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <link name="link0">
+     <visual>
+      <geometry>
+        <cylinder radius="${LinkRadius}" length="${pow((pow(x1,2)+pow(y1,2)+pow(z1,2)),0.5)}"/>
+      </geometry>
+      <origin xyz="${x1/2} ${y1/2} ${z1/2}" rpy="${-atan2(y1,z1)} ${atan2(x1,z1)} 0"/>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <link name="link1">
+     <visual>
+      <geometry>
+        <cylinder radius="${LinkRadius}" length="${pow((pow(x2,2)+pow(y2,2)+pow(z2,2)),0.5)}"/>
+      </geometry>
+      <origin xyz="${x2/2} ${y2/2} ${z2/2}" rpy="${-atan2(y2,z2)} ${atan2(x2,z2)} 0"/>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <link name="link2">
+    <visual>
+      <geometry>
+        <cylinder radius="${LinkRadius}" length="${pow((pow(x3,2)+pow(y3,2)+pow(z3,2)),0.5)}"/>
+      </geometry>
+      <origin xyz="${x3/2} ${y3/2} ${z3/2}" rpy="${-atan2(y3,z3)} ${atan2(x3,z3)} 0"/>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <link name="link3">
+    <visual>
+      <geometry>
+        <cylinder radius="${ToolRadius}" length="${toolLength}"/>
+      </geometry>
+      <origin xyz="${toolLength/2} 0 0" rpy="0 ${3.14/2} 0"/>
+      <material name="black"/>
+    </visual>
+  </link>
+
+  <joint name="base_link_to_link0" type="fixed">
+    <parent link="base_link"/>
+    <child link="link0"/>
+  </joint>
+
+  <joint name="joint1" type="fixed">
+    <parent link="link0"/>
+    <child link="link1"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="${x1} ${y1} ${z1}" rpy="${roll1} ${pitch1} ${yaw1}"/>
+  </joint>
+
+  <joint name="joint2" type="fixed">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="${x2} ${y2} ${z2}" rpy="${roll2} ${pitch2} ${yaw2}"/>
+  </joint>
+
+  <joint name="joint3" type="fixed">
+    <parent link="link2"/>
+    <child link="link3"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="${x3} ${y3} ${z3}" rpy="${roll3} ${pitch3} ${yaw3}"/>
+  </joint>
+
+</robot>
+

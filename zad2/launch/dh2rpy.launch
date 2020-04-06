@@ -1,0 +1,6 @@
+<launch>
+	<arg name="infile" default="$(find zad2)/dh.txt"/>
+	<arg name="outfile" default="$(find zad2)/param.yaml"/>
+
+	<node name="dh2rpy" pkg="zad2" type="dh2rpy.py" required="true" output="screen" args="$(arg infile) $(arg outfile)"/>
+</launch>
