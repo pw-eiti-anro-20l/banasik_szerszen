@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
 	else:
 		inDir = sys.argv[1]
-		outDir = 'rpy.txt'
+		outDir = 'rpy.yaml'
 		if len(sys.argv) > 2:
 			outDir = sys.argv[2]
 		try:	
