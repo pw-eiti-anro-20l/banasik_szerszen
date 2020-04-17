@@ -71,6 +71,7 @@ def dh2rpy( inputFileDirectory, outputFileDirectory ):
 		outFile.write("x%d: %.2f\n" % ((i+1), x[i]))
 		outFile.write("y%d: %.2f\n" % ((i+1), y[i]))
 		outFile.write("z%d: %.2f\n" % ((i+1), z[i]))
+		outFile.write("theta%d: %.2f\n" % ((i+1), theta[i]))
 
 	outFile.close()
 
