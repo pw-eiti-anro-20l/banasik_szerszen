@@ -6,7 +6,6 @@ from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import JointState
 from PyKDL import Rotation, Vector, Frame
 
-
 def callback(data, args):
 	x = args[0]
 	y = args[1]
@@ -33,7 +32,15 @@ def callback(data, args):
 
 	T02 = T01*T12
 	T03 = T02*T23
-		
+
+	quat01 = T01.M.GetQuaternion()
+	quat02 = T02.M.GetQuaternion()
+	quat03 = T03.M.GetQuaternion()
+	
+	if quat01[3] == 0 or quat02[3] == 0 or quat03[3] == 0:
+		rospy.logerr("quaternion calculation failed")
+		return
+
 	msg = PoseStamped()
 	msg.header.stamp = data.header.stamp
 	msg.header.frame_id = "/base_link"
@@ -42,10 +49,10 @@ def callback(data, args):
 	msg.pose.position.y = T01.p.y()
 	msg.pose.position.z = T01.p.z()
 
-	msg.pose.orientation.x = T01.M.GetQuaternion()[0]
-	msg.pose.orientation.y = T01.M.GetQuaternion()[1]
-	msg.pose.orientation.z = T01.M.GetQuaternion()[2]
-	msg.pose.orientation.w = T01.M.GetQuaternion()[3]
+	msg.pose.orientation.x = quat01[0]
+	msg.pose.orientation.y = quat01[1]
+	msg.pose.orientation.z = quat01[2]
+	msg.pose.orientation.w = quat01[3]
 
 	pub1.publish(msg)
 
@@ -53,10 +60,10 @@ def callback(data, args):
 	msg.pose.position.y = T02.p.y()
 	msg.pose.position.z = T02.p.z()
 
-	msg.pose.orientation.x = T02.M.GetQuaternion()[0]
-	msg.pose.orientation.y = T02.M.GetQuaternion()[1]
-	msg.pose.orientation.z = T02.M.GetQuaternion()[2]
-	msg.pose.orientation.w = T02.M.GetQuaternion()[3]
+	msg.pose.orientation.x = quat02[0]
+	msg.pose.orientation.y = quat02[1]
+	msg.pose.orientation.z = quat02[2]
+	msg.pose.orientation.w = quat02[3]
 
 	pub2.publish(msg)
 
@@ -64,10 +71,10 @@ def callback(data, args):
 	msg.pose.position.y = T03.p.y()
 	msg.pose.position.z = T03.p.z()
 
-	msg.pose.orientation.x = T03.M.GetQuaternion()[0]
-	msg.pose.orientation.y = T03.M.GetQuaternion()[1]
-	msg.pose.orientation.z = T03.M.GetQuaternion()[2]
-	msg.pose.orientation.w = T03.M.GetQuaternion()[3]
+	msg.pose.orientation.x = quat03[0]
+	msg.pose.orientation.y = quat03[1]
+	msg.pose.orientation.z = quat03[2]
+	msg.pose.orientation.w = quat03[3]
 
 	pub3.publish(msg)
 
@@ -97,35 +104,30 @@ def kdl_dkin():
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/y%d' % i ):
 			y.append( rospy.get_param('/y%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/z%d' % i ):
 			z.append( rospy.get_param('/z%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/roll%d' % i ):
 			roll.append( rospy.get_param('/roll%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/pitch%d' % i ):
 			pitch.append( rospy.get_param('/pitch%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/yaw%d' % i ):
 			yaw.append( rospy.get_param('/yaw%d' % i ))
 		else:

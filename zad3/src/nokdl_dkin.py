@@ -12,7 +12,8 @@ def Vec(x,y,z):
 
 def Rpy(roll, pitch, yaw):
 	return array([[cos(yaw)*cos(pitch),-sin(yaw)*cos(roll)+cos(yaw)*sin(pitch)*sin(roll),sin(yaw)*sin(roll)+cos(yaw)*sin(pitch)*cos(roll)],
-[sin(yaw)*cos(pitch),cos(yaw)*cos(roll)+sin(yaw)*sin(pitch)*sin(roll),-cos(yaw)*sin(roll)+sin(yaw)*sin(pitch)*cos(roll)],[-sin(pitch),cos(pitch)*sin(roll),cos(pitch)*cos(roll)]])
+				  [sin(yaw)*cos(pitch),cos(yaw)*cos(roll)+sin(yaw)*sin(pitch)*sin(roll),-cos(yaw)*sin(roll)+sin(yaw)*sin(pitch)*cos(roll)],
+				  [-sin(pitch),cos(pitch)*sin(roll),cos(pitch)*cos(roll)]])
 
 def T(rot, vec):
 	t = append(rot,vec, axis=1)
@@ -21,6 +22,10 @@ def T(rot, vec):
 
 def Quat(rot):
 	w = sqrt(1+rot[0,0]+rot[1,1]+rot[2,2])/2
+
+	if w == 0:
+		return [0, 0, 0, 0]
+
 	x = (rot[2,1]-rot[1,2])/(4*w)
 	y = (rot[0,2]-rot[2,0])/(4*w)
 	z = (rot[1,0]-rot[0,1])/(4*w)
@@ -57,6 +62,14 @@ def callback(data, args):
 	T02 = dot(T01, T12)
 	T03 = dot(T02, T23)
 
+	quat01 = Quat(T01)
+	quat02 = Quat(T02)
+	quat03 = Quat(T03)
+
+	if quat01[3] == 0 or quat02[3] == 0 or quat03[3] == 0:
+		rospy.logerr("quaternion calculation failed")
+		return
+
 	msg = PoseStamped()
 	msg.header.stamp = data.header.stamp
 	msg.header.frame_id = "/base_link"
@@ -65,10 +78,10 @@ def callback(data, args):
 	msg.pose.position.y = T01[1,3]
 	msg.pose.position.z = T01[2,3]
 
-	msg.pose.orientation.x = Quat(T01)[0]
-	msg.pose.orientation.y = Quat(T01)[1]
-	msg.pose.orientation.z = Quat(T01)[2]
-	msg.pose.orientation.w = Quat(T01)[3]
+	msg.pose.orientation.x = quat01[0]
+	msg.pose.orientation.y = quat01[1]
+	msg.pose.orientation.z = quat01[2]
+	msg.pose.orientation.w = quat01[3]
 
 	pub1.publish(msg)
 
@@ -76,10 +89,10 @@ def callback(data, args):
 	msg.pose.position.y = T02[1,3]
 	msg.pose.position.z = T02[2,3]
 
-	msg.pose.orientation.x = Quat(T02)[0]
-	msg.pose.orientation.y = Quat(T02)[1]
-	msg.pose.orientation.z = Quat(T02)[2]
-	msg.pose.orientation.w = Quat(T02)[3]
+	msg.pose.orientation.x = quat02[0]
+	msg.pose.orientation.y = quat02[1]
+	msg.pose.orientation.z = quat02[2]
+	msg.pose.orientation.w = quat02[3]
 
 	pub2.publish(msg)
 
@@ -87,10 +100,10 @@ def callback(data, args):
 	msg.pose.position.y = T03[1,3]
 	msg.pose.position.z = T03[2,3]
 
-	msg.pose.orientation.x = Quat(T03)[0]
-	msg.pose.orientation.y = Quat(T03)[1]
-	msg.pose.orientation.z = Quat(T03)[2]
-	msg.pose.orientation.w = Quat(T03)[3]
+	msg.pose.orientation.x = quat03[0]
+	msg.pose.orientation.y = quat03[1]
+	msg.pose.orientation.z = quat03[2]
+	msg.pose.orientation.w = quat03[3]
 
 	pub3.publish(msg)
 
@@ -120,35 +133,30 @@ def nokdl_dkin():
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/y%d' % i ):
 			y.append( rospy.get_param('/y%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/z%d' % i ):
 			z.append( rospy.get_param('/z%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/roll%d' % i ):
 			roll.append( rospy.get_param('/roll%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/pitch%d' % i ):
 			pitch.append( rospy.get_param('/pitch%d' % i ))
 		else:
 			print >> sys.stderr, "Failed reading parameters!"
 			sys.exit(1)
 
-	for i in range(1,4):
 		if rospy.has_param('/yaw%d' % i ):
 			yaw.append( rospy.get_param('/yaw%d' % i ))
 		else:

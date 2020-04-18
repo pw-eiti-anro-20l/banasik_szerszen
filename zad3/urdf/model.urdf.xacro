@@ -98,7 +98,7 @@
     <parent link="link0"/>
     <child link="link1"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000.0" lower="${-2.35-theta1}" upper="${2.35-theta1}" velocity="0.5"/>
+    <limit effort="1000.0" lower="${-3.14-theta1}" upper="${3.14-theta1}" velocity="0.5"/>
     <origin xyz="${x1} ${y1} ${z1}" rpy="${roll1} ${pitch1} ${yaw1}"/>
   </joint>
 
@@ -106,7 +106,7 @@
     <parent link="link1"/>
     <child link="link2"/>
     <axis xyz="0 0 1"/>
-    <limit effort="1000.0" lower="${-2.35-theta2}" upper="${2.35-theta2}" velocity="0.5"/>
+    <limit effort="1000.0" lower="${-3.14-theta2}" upper="${-theta2}" velocity="0.5"/>
     <origin xyz="${x2} ${y2} ${z2}" rpy="${roll2} ${pitch2} ${yaw2}"/>
   </joint>
 
