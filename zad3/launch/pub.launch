@@ -1,9 +1,5 @@
 <launch>
 
-  <arg name="model" default="$(find zad3)/urdf/model.urdf.xacro"/>
-
-  <param name="robot_description" command="$(find xacro)/xacro.py $(arg model)" />
-
   <rosparam file="$(find zad3)/param/param.yaml" />
 
   <node name="kdl_dkin" pkg="zad3" type="kdl_dkin.py" />
