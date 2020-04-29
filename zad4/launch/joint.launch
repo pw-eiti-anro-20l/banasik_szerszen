@@ -1,0 +1,6 @@
+<launch>
+
+  <node name="oint" pkg="zad4" type="oint.py" />
+  <node name="jint" pkg="zad4" type="jint.py" />
+
+</launch>
