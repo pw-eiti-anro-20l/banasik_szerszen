@@ -41,7 +41,7 @@ def handle(req):
         return "Passed invalid time value: %s. Expected positive float64. Service interrupted!" % req.time
 
     msg = PoseStamped()
-    msg.header.frame_id = 'map'
+    msg.header.frame_id = 'base_link'
 
     t = 0
     rate = rospy.Rate(20)
