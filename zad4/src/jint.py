@@ -125,13 +125,6 @@ def jint():
     s = rospy.Service('jint_control_srv', JintControl, handle)
     print "Ready to interpolate."
 
-    sleep(1)
-    msg = JointState()
-    msg.header.stamp = rospy.get_rostime()
-    msg.name = ['joint1', 'joint2', 'joint3']
-    msg.position = [0.0]*3
-    pub.publish(msg)
-
     rospy.spin()
 
 if __name__ == "__main__":
