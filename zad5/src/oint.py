@@ -109,7 +109,7 @@ def jint():
     global pub
 
     lock = False
-    pose_now = [0.0] * 6
+    pose_now = [3.0] + [0.0]*5
     pub = rospy.Publisher('/oint_rviz', PoseStamped, queue_size = 1)
     rospy.init_node('oint')
     s = rospy.Service('oint_control_srv', OintControl, handle)
