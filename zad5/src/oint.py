@@ -4,8 +4,10 @@ from time import sleep
 from sys import stderr
 from zad4.srv import OintControl, OintControlResponse
 from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Path
 from PyKDL import Rotation
 import rospy
+import copy
 
 def linear_interpolation(t, x0, x1, time_period):
     return x0 + (x1-x0)*t/time_period
@@ -19,7 +21,8 @@ def polynomial_interpolation(t, x0, x1, time_period):
 def handle(req):
     global lock
     global pose_now
-    global pub
+    global pub_pose
+    global pub_path
 
     while lock == True:
         sleep(1)
@@ -43,6 +46,9 @@ def handle(req):
     msg = PoseStamped()
     msg.header.frame_id = 'base_link'
 
+    path = Path()
+    path.header.frame_id = 'base_link'
+
     t = 0
     rate = rospy.Rate(20)
     while t < req.time:
@@ -65,7 +71,12 @@ def handle(req):
         msg.pose.orientation.z = quat[2]
         msg.pose.orientation.w = quat[3]
 
-        pub.publish(msg)
+        pub_pose.publish(msg)
+
+        path.header.stamp = msg.header.stamp
+        path.poses.append(copy.deepcopy(msg))
+
+        pub_path.publish(path)
 
         if req.time - t < 0.05:
             t = req.time
@@ -91,7 +102,15 @@ def handle(req):
     msg.pose.orientation.z = quat[2]
     msg.pose.orientation.w = quat[3]
 
-    pub.publish(msg)
+    pub_pose.publish(msg)
+
+    path.header.stamp = msg.header.stamp
+    path.poses.append(copy.deepcopy(msg))
+
+    pub_path.publish(path)
+
+    for point in path.poses:
+        print point.pose.position.x
 
     pose_now[0] = msg.pose.position.x
     pose_now[1] = msg.pose.position.y
@@ -106,11 +125,13 @@ def handle(req):
 def jint():
     global lock
     global pose_now
-    global pub
+    global pub_pose
+    global pub_path
 
     lock = False
     pose_now = [3.0] + [0.0]*5
-    pub = rospy.Publisher('/oint_rviz', PoseStamped, queue_size = 1)
+    pub_pose = rospy.Publisher('/oint_rviz_pose', PoseStamped, queue_size = 1)
+    pub_path = rospy.Publisher('/oint_rviz_path', Path, queue_size = 10)
     rospy.init_node('oint')
     s = rospy.Service('oint_control_srv', OintControl, handle)
     print "Ready to interpolate."
