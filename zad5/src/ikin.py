@@ -17,6 +17,10 @@ def callback(data):
 	r2 = x**2 + y**2 + z**2
 	r = sqrt(r2)
 
+	if r < 1.3 or r > 3:
+		rospy.logerr("Point exceeded workpace")
+		return
+
 	beta = abs(atan2( z,sqrt(x**2 + y**2 ) ))
 
 	theta1_list = []
@@ -24,12 +28,12 @@ def callback(data):
 	theta3_list = []
 
 	theta1_list += [atan2(y,x)]
-	#theta1_list += [atan2(y,x) + 3.14]
+	theta1_list += [atan2(y,x) + 3.14]
 
 	theta2_list += [abs(acos( (r2+3)/(4*r) )) - beta]
 	theta2_list += [-abs(acos( (r2+3)/(4*r) )) - beta]
-	#theta2_list += [-abs(acos( (r2+3)/(4*r) )) + beta + 3.14]
-	#theta2_list += [abs(acos( (r2+3)/(4*r) )) + beta + 3.14]
+	theta2_list += [-abs(acos( (r2+3)/(4*r) )) + beta + 3.14]
+	theta2_list += [abs(acos( (r2+3)/(4*r) )) + beta + 3.14]
 
 	theta3_list += [acos( (r2-5)/4 )]
 	theta3_list += [-acos( (r2-5)/4 )]
@@ -37,16 +41,18 @@ def callback(data):
 	flag1 = True
 	flag2 = False
 
-	#if abs(theta1_list[0] - theta_now[0]) < abs(theta1_list[1] - theta_now[0]):
-	#	theta1 = theta1_list[0]
-	#	print("normal")
-	#	flag1 = True
-	#else:
-	#	theta1 = theta1_list[1]
-	#	print("over 90")
-	#	flag1 = False
-
-	theta1 = theta1_list[0]
+	if abs(theta1_list[0] - theta_now[0]) > 6:
+		theta1 = theta1_list[0]
+		flag1 = True
+	elif abs(theta1_list[1] - theta_now[0]) > 6:
+		theta1 = theta1_list[1]
+		flag1 = False
+	elif abs(theta1_list[0] - theta_now[0]) < abs(theta1_list[1] - theta_now[0]):
+		theta1 = theta1_list[0]
+		flag1 = True
+	else:
+		theta1 = theta1_list[1]
+		flag1 = False
 
 	if flag1:
 		if abs(theta2_list[0] - theta_now[1] + 0.01) < abs(theta2_list[1] - theta_now[1]):
@@ -55,6 +61,7 @@ def callback(data):
 		else:
 			theta2 = theta2_list[1]
 			flag2 = False
+
 	else:
 		if abs(theta2_list[2] - theta_now[1]) < abs(theta2_list[3] - theta_now[1]):
 			theta2 = theta2_list[2]
@@ -63,16 +70,17 @@ def callback(data):
 			theta2 = theta2_list[3]
 			flag2 = True
 
+
 	if flag2:
 		theta3 = theta3_list[1]
 	else:
 		theta3 = theta3_list[0]
 
 
-	#if abs(x) < 0.01 and abs(y) < 0.01:
-	#	theta1 = theta_now[0]
-	#	theta2 = theta_now[1]
-	#	theta3 = theta_now[2]
+	if abs(x) < 0.01 and abs(y) < 0.01:
+		theta1 = theta_now[0]
+		theta2 = theta_now[1]
+		theta3 = theta_now[2]
 
 	theta_now = [theta1, theta2, theta3]
 
