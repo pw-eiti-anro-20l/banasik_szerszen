@@ -20,7 +20,7 @@ def callback(data, args):
 	r2 = x**2 + y**2 + z**2
 	r = sqrt(r2)
 
-	if r < 1.3 or r > 3:
+	if r < sqrt(a2**2 + tl**2 - 1.41*a2*tl) or r > a2+tl:
 		rospy.logerr("Point exceeded workpace")
 		return
 
