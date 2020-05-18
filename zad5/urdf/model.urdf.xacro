@@ -5,11 +5,11 @@
   <xacro:property name="baseLength" value="0.6" />
   <xacro:property name="LinkRadius" value="0.2" />
   <xacro:property name="ToolRadius" value="0.1" />
-  <xacro:property name="toolLength" value="1" />
 
-  <xacro:property name="yaml_file" value="$(find zad4)/param/param.yaml" />
+  <xacro:property name="yaml_file" value="$(find zad5)/param/param.yaml" />
   <xacro:property name="param" value="${load_yaml(yaml_file)}"/>
 
+  <xacro:property name="toolLength" value="${param['tool_length']}" />
   <xacro:property name="roll1" value="${param['roll1']}" />
   <xacro:property name="roll2" value="${param['roll2']}" />
   <xacro:property name="roll3" value="${param['roll3']}" />

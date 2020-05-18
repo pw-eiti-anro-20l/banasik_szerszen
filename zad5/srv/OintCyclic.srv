@@ -1,0 +1,8 @@
+string mode
+float64 a
+float64 b
+float64 z
+float64 cycle_time
+int8 cycle_count
+---
+string message

@@ -7,9 +7,12 @@ from sensor_msgs.msg import JointState
 from math import sqrt, atan2, acos
 
 
-def callback(data):
+def callback(data, args):
 	global theta_now
 	global pub
+
+	tl = args[0]
+	a2 = args[1]
 
 	x = data.pose.position.x
 	y = data.pose.position.y
@@ -30,13 +33,13 @@ def callback(data):
 	theta1_list += [atan2(y,x)]
 	theta1_list += [atan2(y,x) + 3.14]
 
-	theta2_list += [abs(acos( (r2+3)/(4*r) )) - beta]
-	theta2_list += [-abs(acos( (r2+3)/(4*r) )) - beta]
-	theta2_list += [-abs(acos( (r2+3)/(4*r) )) + beta + 3.14]
-	theta2_list += [abs(acos( (r2+3)/(4*r) )) + beta + 3.14]
+	theta2_list += [abs(acos( (r2 + a2**2 - tl**2)/(2*a2*r) )) - beta]
+	theta2_list += [-abs(acos( (r2 + a2**2 - tl**2)/(2*a2*r) )) - beta]
+	theta2_list += [-abs(acos( (r2 + a2**2 - tl**2)/(2*a2*r) )) + beta - 3.14]
+	theta2_list += [abs(acos( (r2 + a2**2 - tl**2)/(2*a2*r) )) + beta - 3.14]
 
-	theta3_list += [acos( (r2-5)/4 )]
-	theta3_list += [-acos( (r2-5)/4 )]
+	theta3_list += [acos( (r2 - a2**2 - tl**2)/(2*a2*tl) )]
+	theta3_list += [-acos( (r2 - a2**2 - tl**2)/(2*a2*tl) )]
 
 	flag1 = True
 	flag2 = False
@@ -98,8 +101,21 @@ def ikin():
 	theta_now = [0.0]*3
 	pub = rospy.Publisher('/joint_states', JointState, queue_size = 1)
 	rospy.init_node('ikin')
-	rospy.Subscriber('/oint_rviz_pose', PoseStamped, callback)
-	print "Ready for inversing zee kinemakicks problym"
+
+	if rospy.has_param('tool_length'):
+		tool_length = rospy.get_param('tool_length')
+	else:
+		print >> sys.stderr, "Failed reading parameters!"
+		sys.exit(1)
+
+	if rospy.has_param('/x3' ):
+		a2 = rospy.get_param('x3')
+	else:
+		print >> sys.stderr, "Failed reading parameters!"
+		sys.exit(1)
+
+	rospy.Subscriber('/oint_rviz_pose', PoseStamped, callback, (tool_length, a2) )
+	print "Ready for inverse kinematics task!"
 
 	rospy.spin()
 
