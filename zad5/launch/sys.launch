@@ -1,0 +1,6 @@
+<launch>
+
+  <node name="oint" pkg="zad5" type="oint.py" />
+  <node name="ikin" pkg="zad5" type="ikin.py" />
+
+</launch>
